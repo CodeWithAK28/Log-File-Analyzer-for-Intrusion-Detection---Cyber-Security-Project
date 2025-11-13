@@ -35,7 +35,8 @@ def parse_apache_log(file_path):
     # Create DataFrame
     df = pd.DataFrame(
         matches,
-        columns=['ip', 'timestamp', 'method', 'path', 'protocol', 'status', 'size']
+        columns=['ip', 'timestamp', 'method',
+                 'path', 'protocol', 'status', 'size']
     )
 
     print(f"[+] Converting timestamp for {len(df)} rows")
@@ -46,7 +47,8 @@ def parse_apache_log(file_path):
     )
 
     if df['timestamp'].isna().all():
-        print("[!] Warning: All timestamps failed to convert — check your parser output.")
+        print(
+            "[!] Warning: All timestamps failed to convert — check your parser output.")
 
     # Convert numbers
     df['status'] = pd.to_numeric(df['status'], errors='coerce')
@@ -92,7 +94,8 @@ def parse_auth_log(file_path):
     )
 
     if df['timestamp'].isna().all():
-        print("[!] Warning: All timestamps failed to convert — check your parser output.")
+        print(
+            "[!] Warning: All timestamps failed to convert — check your parser output.")
 
     df['service'] = 'auth'
     return df
@@ -107,8 +110,10 @@ def load_combined_logs(data_dir):
     apache_path = data_dir / 'access.log'
     auth_path = data_dir / 'auth.log'
 
-    apache_df = parse_apache_log(apache_path) if apache_path.exists() else pd.DataFrame()
-    auth_df = parse_auth_log(auth_path) if auth_path.exists() else pd.DataFrame()
+    apache_df = parse_apache_log(
+        apache_path) if apache_path.exists() else pd.DataFrame()
+    auth_df = parse_auth_log(
+        auth_path) if auth_path.exists() else pd.DataFrame()
 
     if not apache_df.empty and not auth_df.empty:
         combined = pd.concat([apache_df, auth_df], ignore_index=True)
